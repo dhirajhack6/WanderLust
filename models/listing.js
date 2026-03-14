@@ -19,10 +19,15 @@ const listingSchema = new Schema({
         : v,
   },
   
-  
   price: Number,
   location: String,
   country: String,
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    }
+  ]
 })
 
 const listing = mongoose.model("listing", listingSchema);

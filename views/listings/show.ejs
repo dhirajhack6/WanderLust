@@ -1,49 +1,75 @@
 <% layout("layouts/boilerplate.ejs") %>
 
-    <div class="row justify-content-center mt-4">
-        <div class="col-md-8">
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8">
+    <h3 class="mb-3"><b> <%= listing.title %></b></h3>
 
-            <h3 class="mb-3"> <b>Listing Details</b></h3>
+    <div class="card shadow-sm">
+      <img
+        src="<%= listing.image %>"
+        class="card-img-top show-img"
+        alt="listing image"
+      />
 
-            <div class="card shadow-sm">
+      <div class="card-body">
+        <p class="card-text text-muted"><%= listing.description %></p>
 
-                <img src="<%= listing.image %>" class="card-img-top show-img" alt="listing image">
+        <ul class="list-group list-group-flush mb-3">
+          <li class="list-group-item">
+            <strong>Price:</strong>
+            ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A"
+            %>
+          </li>
+          <li class="list-group-item">
+            <strong>Location:</strong>
+            <%= listing.location %>, <%= listing.country %>
+          </li>
+        </ul>
 
-                <div class="card-body">
+        <div class="d-flex gap-2">
+          <a
+            href="/listings/<%= listing._id %>/edit"
+            class="btn btn-outline-primary"
+          >
+            Edit
+          </a>
 
-                    <h4 class="card-title">
-                       <b> <%= listing.title %></b>
-                    </h4>
-
-                    <p class="card-text text-muted">
-                        <%= listing.description %>
-                    </p>
-
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item">
-                            <strong>Price:</strong>
-                            ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Location:</strong>
-                            <%= listing.location %>, <%= listing.country %>
-                        </li>
-                    </ul>
-
-                    <div class="d-flex gap-2">
-                        <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-primary">
-                            Edit
-                        </a>
-
-                        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-                            <button class="btn btn-outline-danger">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-
+          <form
+            method="POST"
+            action="/listings/<%= listing._id %>?_method=DELETE"
+          >
+            <button class="btn btn-outline-danger">Delete</button>
+          </form>
         </div>
+        <hr />
+        <div class="col-8 offset-3 mb-3">
+          <h4>Leave a review</h4>
+          <form>
+            <div class="mb-3 mt-3">
+              <label for="rating" class="form-label">Rating</label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                id="rating"
+                name="review[rating]"
+                class="form-range"
+              />
+              <div class="mb-3 mt-3">
+                <label for="comment" class="form-label">Comments</label>
+                <textarea
+                  name="review[comment]"
+                  id="comment"
+                  cols="30"
+                  rows="5"
+                  class="form-control"
+                ></textarea>
+              </div>
+              <button class="btn btn-outline-dark">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
