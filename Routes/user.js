@@ -36,7 +36,7 @@ router.post(
 
   async (req, res) => {
     req.flash("success", "Welcome to Wanderlust!");
-    let redirect = res.locals.redirect || "listings"
+    let redirect = res.locals.redirectUrl || "/listings"
     res.redirect(redirect);
   },
 );

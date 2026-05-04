@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const initData = require("./data.js");
 const listing = require("../models/listing.js");
 
@@ -17,9 +17,14 @@ async function main() {
 }
 
 const initDB = async () => {
-    await listing.deleteMany({});
-    await listing.insertMany(initData.data);
-    console.log("data was initialized ")
+  await listing.deleteMany({});
+  initData.data = initData.data.map((obj) => ({
+    ...obj,
+    owner: "69e8d5a0d8ecbc95a62af538",
+  }));
+
+  await listing.insertMany(initData.data);
+  console.log("data was initialized ");
 };
 
 initDB();
