@@ -1,3 +1,10 @@
+
+
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -95,15 +102,14 @@ app.use("/listings", listingRouter);
 app.use("/", userRouter);
 
 
-app.use((req, res, next) => {
-  next(new Error("Page Not Found"));
-});
-
+// 404 middleware
 app.use((req, res, next) => {
   const err = new Error("Page not found");
   err.status = 404;
   next(err);
 });
+
+// error handler
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;

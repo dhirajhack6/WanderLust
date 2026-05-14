@@ -36,18 +36,19 @@ module.exports.validateListing = (req, res, next) => {
   
   let { error } = listingSchema.validate(req.body);
   if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
+    let msg = error.details.map((el) => el.message).join(",");
     req.flash("error", msg);
-    return res.redirect("/listings");
+    return res.redirect("/listings/new");
   } 
   next();
 };
 
 module.exports.validateReview = (req, res, next) => {
   let { error } = reviewSchema.validate(req.body);
+  console.log(req.body);
 
   if (error) {
-    let errMsg = error.details.map((el) => el.message).join(",");
+    let msg = error.details.map((el) => el.message).join(",");
     req.flash("error", msg);
     return res.redirect("/listings");
   }

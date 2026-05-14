@@ -1,11 +1,17 @@
 const express = require("express");
 const wrapAsync = require("../utils/wrapAsync");
-const Router = express.Router();
+
 const ExpressError = require("../utils/expressError");
 
 const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
 const listingController = require("../controllers/listings.js");
+const router = express.Router();
+const multer = require("multer");
+
+const {storage} = require("../cloudConfig.js")
+
+const upload = multer({ storage });
 
 console.log(Listing.reviews);
 const {
@@ -15,58 +21,74 @@ const {
   validateReview,
 } = require("../middleware.js");
 
-// Index Route
-Router.get("/", wrapAsync(listingController.index));
+router
+  .route("/")
+  .get(wrapAsync(listingController.index))
+    .post(
+    isLoggedIn,
 
-
+    
+    upload.single("listing[image]"),
+    wrapAsync(listingController.createListing),
+  );
+ 
 //New route
-Router.get("/new", isLoggedIn, listingController.renderNewForm);
-  console.log("STEP 2: after isLoggedIn");
+router.get("/new", isLoggedIn, listingController.renderNewForm);
 
 // Show Route
-Router.get("/:id", wrapAsync(listingController.showListing));
 
+router
+  .route("/:id")
+  .get(wrapAsync(listingController.showListing))
+  .put(
+    isLoggedIn,
+    isOwner,
+    upload.single("listing[image]"),
+    validateListing,
 
-// Create Route
-Router.post(
-  "/",
-  isLoggedIn,
+    wrapAsync(listingController.updateListing),
+  )
+  .delete(
+    isLoggedIn,
+    isOwner,
 
-  // validateListing,
-  wrapAsync(listingController.creatListing),
-);
+    wrapAsync(listingController.destroyListing),
+  );
+
+// // Create Route
+// router;
 
 //Edit route
-Router.get(
+router.get(
   "/:id/edit",
   isLoggedIn,
   isOwner,
   wrapAsync(listingController.renderEditForm),
 );
 
-//Update Route
-Router.put(
-  "/:id",
-  isLoggedIn,
-  validateListing,
-  isOwner,
-  wrapAsync(listingController.updateListing),
-);
+// //Update Route
+// Router.put(
+//   "/:id",
+//   isLoggedIn,
+//   validateListing,
+//   isOwner,
+//   wrapAsync(listingController.updateListing),
+// );
 
-// Delete Route
-Router.delete(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  validateListing,
+// // Delete Route
+// Router.delete(
+//   "/:id",
+//   isLoggedIn,
+//   isOwner,
+//   validateListing,
 
-  wrapAsync(listingController.destroyListing),
-);
+//   wrapAsync(listingController.destroyListing),
+// );
 
 // Reviews
 // Post  review Route
 
-Router.post(
+router.post(
   "/:id/reviews",
   isLoggedIn,
   validateReview,
@@ -88,7 +110,7 @@ Router.post(
 );
 
 // Delete Review Route
-Router.delete(
+router.delete(
   "/:id/reviews/:reviewId",
   isLoggedIn,
   isOwner,
@@ -101,4 +123,4 @@ Router.delete(
   }),
 );
 
-module.exports = Router;
+module.exports = router;
