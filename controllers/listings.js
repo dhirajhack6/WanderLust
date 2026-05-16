@@ -87,10 +87,7 @@ module.exports.renderEditForm = async (req, res) => {
     return res.redirect("/listings");
   }
   let originalImageUrl = listing.image.url;
-  originalImageUrl = originalImageUrl.replace(
-    "/upload",
-    "/upload/e_blur:300/"
-  );
+  originalImageUrl = originalImageUrl.replace("/upload", "/upload/e_blur:300/");
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
@@ -115,4 +112,19 @@ module.exports.destroyListing = async (req, res) => {
   console.log(deletedListing);
   req.flash("success", "Listing Deleted!");
   res.redirect("/listings");
+};
+
+module.exports.categoryFilter = async (req, res) => {
+  let category = String(req.params.category);
+
+  category = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+
+  const allListings = await Listing.find({
+    category,
+  });
+
+  res.render("listings/index.ejs", {
+    allListings,
+    selectedCategory: category,
+  });
 };

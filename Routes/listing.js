@@ -1,15 +1,16 @@
-const express = require("express");
-const wrapAsync = require("../utils/wrapAsync");
+const express = require('express');
+const wrapAsync = require('../utils/wrapAsync');
 
-const ExpressError = require("../utils/expressError");
+const ExpressError = require('../utils/expressError');
 
-const Listing = require("../models/listing.js");
-const Review = require("../models/review.js");
-const listingController = require("../controllers/listings.js");
+const Listing = require('../models/listing.js');
+const Review = require('../models/review.js');
+const listingController = require('../controllers/listings.js');
 const router = express.Router();
-const multer = require("multer");
+const multer = require('multer');
+const listings = require('../controllers/listings');
 
-const {storage} = require("../cloudConfig.js")
+const { storage } = require('../cloudConfig.js');
 
 const upload = multer({ storage });
 
@@ -19,31 +20,27 @@ const {
   isOwner,
   validateListing,
   validateReview,
-} = require("../middleware.js");
+} = require('../middleware.js');
 
-router
-  .route("/")
-  .get(wrapAsync(listingController.index))
-    .post(
-    isLoggedIn,
+router.route('/').get(wrapAsync(listingController.index)).post(
+  isLoggedIn,
 
-    
-    upload.single("listing[image]"),
-    wrapAsync(listingController.createListing),
-  );
- 
+  upload.single('listing[image]'),
+  wrapAsync(listingController.createListing),
+);
+
 //New route
-router.get("/new", isLoggedIn, listingController.renderNewForm);
+router.get('/new', isLoggedIn, listingController.renderNewForm);
 
 // Show Route
 
 router
-  .route("/:id")
+  .route('/:id')
   .get(wrapAsync(listingController.showListing))
   .put(
     isLoggedIn,
     isOwner,
-    upload.single("listing[image]"),
+    upload.single('listing[image]'),
     validateListing,
 
     wrapAsync(listingController.updateListing),
@@ -60,7 +57,7 @@ router
 
 //Edit route
 router.get(
-  "/:id/edit",
+  '/:id/edit',
   isLoggedIn,
   isOwner,
   wrapAsync(listingController.renderEditForm),
@@ -89,7 +86,7 @@ router.get(
 // Post  review Route
 
 router.post(
-  "/:id/reviews",
+  '/:id/reviews',
   isLoggedIn,
   validateReview,
 
@@ -104,14 +101,16 @@ router.post(
     await newReview.save();
     await listing.save();
 
-    console.log("new review saved");
+    console.log('new review saved');
     res.redirect(`/listings/${listing._id}`);
   }),
 );
 
+router.get('/category/:category', wrapAsync(listings.categoryFilter));
+
 // Delete Review Route
 router.delete(
-  "/:id/reviews/:reviewId",
+  '/:id/reviews/:reviewId',
   isLoggedIn,
   isOwner,
   wrapAsync(async (req, res) => {
