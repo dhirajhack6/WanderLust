@@ -32,6 +32,29 @@ router.route('/').get(wrapAsync(listingController.index)).post(
 //New route
 router.get('/new', isLoggedIn, listingController.renderNewForm);
 
+
+router.get('/search', async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    const listings = await Listing.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { location: { $regex: query, $options: 'i' } },
+        { country: { $regex: query, $options: 'i' } },
+      ],
+    });
+
+    res.render('listings/index.ejs', {
+      allListings: listings
+    }
+    );
+  } catch (err) {
+    console.log(err);
+    res.send('Something went wrong');
+  }
+});
+
 // Show Route
 
 router
@@ -121,5 +144,7 @@ router.delete(
     res.redirect(`/listings/${id}`);
   }),
 );
+
+
 
 module.exports = router;
