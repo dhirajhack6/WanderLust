@@ -20,7 +20,11 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user.js');
 const userRouter = require('./Routes/user.js');
 
-// ================= DATABASE CONNECTION =================
+const chatRouter = require("./Routes/chat");
+
+
+
+// ================= DATABASE CONNECTION =================i
 
 const dbUrl = process.env.ATLAS_DB_URL;
 
@@ -104,6 +108,8 @@ app.use((req, res, next) => {
 app.use('/listings/:id/reviews', reviewRouter);
 app.use('/listings', listingRouter);
 app.use('/', userRouter);
+app.use('/chat', chatRouter);
+
 
 // ================= 404 HANDLER =================
 
